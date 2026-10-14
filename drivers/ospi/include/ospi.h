@@ -640,6 +640,91 @@ static inline void aes_set_signal_delay(struct ospi_aes_regs *aes, uint8_t delay
 	aes->AES_SCLK_DELAY = ((delay << AES_SCLK_DELAY_POS) | (delay << AES_SCLK_N_DELAY_POS));
 }
 
+#pragma pack(push, 1)
+typedef struct ospi_delay_cfg {
+    uint32_t idx;       /* OSPI controller the config belongs to (0 or 1) */
+    uint32_t sclk_freq; /* OSPI controller SCLK frequency (calibration was done with this frequency) */
+    uint8_t txd[16];    /* per-line TXD delay taps (index 0..15)     */
+    uint8_t rxd[16];    /* per-line RXD delay taps (index 0..15)     */
+    uint8_t ssioen[16]; /* per-line OE_N delay taps (index 0..15)    */
+    uint8_t rxds[2];    /* RXDS strobe delays (index 0..1)           */
+    uint8_t txddm[2];   /* TXD DM data delays (index 0..1)           */
+    uint8_t dmoen[2];   /* DM OE_N delays (index 0..1) */
+    uint8_t sclk;       /* SCLK delay */
+    uint8_t sclkn;      /* SCLK_N delay */
+    uint8_t ssn[2];     /* SS_N delay (index 0..1) */
+} ospi_delay_cfg_t;
+#pragma pack(pop)
+
+static inline void aes_set_rxds_delay2(struct ospi_aes_regs *aes, const struct ospi_delay_cfg *ospi_delay)
+{
+	aes->AES_RXDS_DLY = ((ospi_delay->rxds[0] << AES_SIGNAL_0_DELAY_POS) | (ospi_delay->rxds[1] << AES_SIGNAL_1_DELAY_POS));
+}
+
+static inline void aes_set_signal_delay2(struct ospi_aes_regs *aes, const struct ospi_delay_cfg *ospi_delay)
+{
+	aes->AES_RXD_DELAY_0 = ((ospi_delay->rxd[0] << AES_SIGNAL_0_DELAY_POS)
+				| (ospi_delay->rxd[1] << AES_SIGNAL_1_DELAY_POS)
+				| (ospi_delay->rxd[2] << AES_SIGNAL_2_DELAY_POS)
+				| (ospi_delay->rxd[3] << AES_SIGNAL_3_DELAY_POS));
+	aes->AES_RXD_DELAY_1 = ((ospi_delay->rxd[4] << AES_SIGNAL_4_DELAY_POS)
+				| (ospi_delay->rxd[5] << AES_SIGNAL_5_DELAY_POS)
+				| (ospi_delay->rxd[6] << AES_SIGNAL_6_DELAY_POS)
+				| (ospi_delay->rxd[7] << AES_SIGNAL_7_DELAY_POS));
+	aes->AES_RXD_DELAY_2 = ((ospi_delay->rxd[8] << AES_SIGNAL_8_DELAY_POS)
+				| (ospi_delay->rxd[9] << AES_SIGNAL_9_DELAY_POS)
+				| (ospi_delay->rxd[10] << AES_SIGNAL_10_DELAY_POS)
+				| (ospi_delay->rxd[11] << AES_SIGNAL_11_DELAY_POS));
+	aes->AES_RXD_DELAY_3 = ((ospi_delay->rxd[12] << AES_SIGNAL_12_DELAY_POS)
+				| (ospi_delay->rxd[13] << AES_SIGNAL_13_DELAY_POS)
+				| (ospi_delay->rxd[14] << AES_SIGNAL_14_DELAY_POS)
+				| (ospi_delay->rxd[15] << AES_SIGNAL_15_DELAY_POS));
+
+	aes->AES_TXD_DELAY_0 = ((ospi_delay->txd[0] << AES_SIGNAL_0_DELAY_POS)
+				| (ospi_delay->txd[1] << AES_SIGNAL_1_DELAY_POS)
+				| (ospi_delay->txd[2] << AES_SIGNAL_2_DELAY_POS)
+				| (ospi_delay->txd[3] << AES_SIGNAL_3_DELAY_POS));
+	aes->AES_TXD_DELAY_1 = ((ospi_delay->txd[4] << AES_SIGNAL_4_DELAY_POS)
+				| (ospi_delay->txd[5] << AES_SIGNAL_5_DELAY_POS)
+				| (ospi_delay->txd[6] << AES_SIGNAL_6_DELAY_POS)
+				| (ospi_delay->txd[7] << AES_SIGNAL_7_DELAY_POS));
+	aes->AES_TXD_DELAY_2 = ((ospi_delay->txd[8] << AES_SIGNAL_8_DELAY_POS)
+				| (ospi_delay->txd[9] << AES_SIGNAL_9_DELAY_POS)
+				| (ospi_delay->txd[10] << AES_SIGNAL_10_DELAY_POS)
+				| (ospi_delay->txd[11] << AES_SIGNAL_11_DELAY_POS));
+	aes->AES_TXD_DELAY_3 = ((ospi_delay->txd[12] << AES_SIGNAL_12_DELAY_POS)
+				| (ospi_delay->txd[13] << AES_SIGNAL_13_DELAY_POS)
+				| (ospi_delay->txd[14] << AES_SIGNAL_14_DELAY_POS)
+				| (ospi_delay->txd[15] << AES_SIGNAL_15_DELAY_POS));
+
+	aes->AES_SSI_OE_N_DELAY_0 = ((ospi_delay->ssioen[0] << AES_SIGNAL_0_DELAY_POS)
+				   | (ospi_delay->ssioen[1] << AES_SIGNAL_1_DELAY_POS)
+				   | (ospi_delay->ssioen[2] << AES_SIGNAL_2_DELAY_POS)
+				   | (ospi_delay->ssioen[3] << AES_SIGNAL_3_DELAY_POS));
+	aes->AES_SSI_OE_N_DELAY_1 = ((ospi_delay->ssioen[4] << AES_SIGNAL_4_DELAY_POS)
+				   | (ospi_delay->ssioen[5] << AES_SIGNAL_5_DELAY_POS)
+				   | (ospi_delay->ssioen[6] << AES_SIGNAL_6_DELAY_POS)
+				   | (ospi_delay->ssioen[7]	 << AES_SIGNAL_7_DELAY_POS));
+	aes->AES_SSI_OE_N_DELAY_2 = ((ospi_delay->ssioen[8] << AES_SIGNAL_8_DELAY_POS)
+				   | (ospi_delay->ssioen[9] << AES_SIGNAL_9_DELAY_POS)
+				   | (ospi_delay->ssioen[10] << AES_SIGNAL_10_DELAY_POS)
+				   | (ospi_delay->ssioen[11] << AES_SIGNAL_11_DELAY_POS));
+	aes->AES_SSI_OE_N_DELAY_3 = ((ospi_delay->ssioen[12] << AES_SIGNAL_12_DELAY_POS)
+				   | (ospi_delay->ssioen[13] << AES_SIGNAL_13_DELAY_POS)
+				   | (ospi_delay->ssioen[14] << AES_SIGNAL_14_DELAY_POS)
+				   | (ospi_delay->ssioen[15] << AES_SIGNAL_15_DELAY_POS));
+
+	aes->AES_SS_N_DELAY = ((ospi_delay->ssn[0] << AES_SIGNAL_0_DELAY_POS)
+				| (ospi_delay->ssn[1] << AES_SIGNAL_1_DELAY_POS));
+
+	aes->AES_TXD_DM_DELAY = ((ospi_delay->txddm[0] << AES_TXD_DM_0_DELAY_POS)
+				| (ospi_delay->txddm[1] << AES_TXD_DM_1_DELAY_POS)
+				| (ospi_delay->dmoen[0] << AES_DM_OE_N_DELAY_0_POS)
+				| (ospi_delay->dmoen[1] << AES_DM_OE_N_DELAY_1_POS));
+
+	aes->AES_SCLK_DELAY = ((ospi_delay->sclk << AES_SCLK_DELAY_POS) | (ospi_delay->sclkn << AES_SCLK_N_DELAY_POS));
+}
+
 struct aes_addr_ctrl {
 	/* Number of bits in the lower portion of the address */
 	uint8_t addr_lower_bits;
