@@ -94,6 +94,7 @@ struct ospi_init {
 	uint32_t  core_clk;                     /* System Clock */
 	uint32_t  cs_pin;                       /* Slave Pin */
 	uint32_t  rx_ds_delay;                  /* Rx-DS Delay */
+	const struct ospi_delay_cfg *line_delays; /* Calibrated delays, or NULL for rx_ds_delay alone */
 	enum ospi_baud2_delay baud2_delay;      /* BAUD2 delay initial setting */
 
 	uint32_t  *base_regs;                   /* OSPI REG */
